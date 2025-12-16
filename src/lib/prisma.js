@@ -7,16 +7,25 @@ const globalForPrisma = globalThis
 let prisma
 
 if (!globalForPrisma.prisma) {
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  })
-  
-  const adapter = new PrismaPg(pool)
-  
-  prisma = new PrismaClient({
-    adapter,
-    log: ['query', 'error', 'warn'],
-  })
+  // For Prisma 7, we can use either adapter or direct connection
+  // Using adapter for better connection pooling
+  if (process.env.DATABASE_URL) {
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    })
+    
+    const adapter = new PrismaPg(pool)
+    
+    prisma = new PrismaClient({
+      adapter,
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    })
+  } else {
+    // Fallback for environments without DATABASE_URL
+    prisma = new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    })
+  }
   
   if (process.env.NODE_ENV !== 'production') {
     globalForPrisma.prisma = prisma
