@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client']
-  },
+  // Fix for Next.js 16 - moved from experimental to top level
+  serverExternalPackages: ['@prisma/client'],
+  
   images: {
-    domains: ['uwuuyelynldcpumhcqhn.supabase.co'],
+    // Remove deprecated domains, use only remotePatterns
     remotePatterns: [
       {
         protocol: 'https',
@@ -14,16 +14,13 @@ const nextConfig = {
       },
     ],
   },
+  
+  // Add empty turbopack config to silence the warning
+  turbopack: {},
+  
   // Optimize for Vercel deployment
   poweredByHeader: false,
   compress: true,
-  // Handle Prisma in serverless environment
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals.push('@prisma/client');
-    }
-    return config;
-  },
 };
 
 export default nextConfig;
