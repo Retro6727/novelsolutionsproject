@@ -12,9 +12,6 @@ export default function Header() {
     setCartCount(cart.reduce((total, item) => total + item.quantity, 0));
   }, []);
 
-  const isAuthenticated = false; // Replace with actual authentication check
-  const isAdmin = false;
-
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-indigo-600 via-purple-700 to-pink-600 shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -76,33 +73,6 @@ export default function Header() {
               {cartCount}
             </span>
           </Link>
-
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="text-white text-sm font-semibold px-3 py-1 rounded-md hover:bg-yellow-400 hover:text-black transition-colors"
-              aria-label="Admin Panel"
-              title="Admin Panel"
-            >
-              ⚙️ Admin
-            </Link>
-          )}
-
-          {isAuthenticated ? (
-            <Link
-              href="/logout"
-              className="rounded-full bg-yellow-400 hover:bg-yellow-500 text-black px-5 py-2 font-bold transition-colors shadow-lg shadow-yellow-300"
-            >
-              Logout
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="rounded-full bg-yellow-400 hover:bg-yellow-500 text-black px-5 py-2 font-bold transition-colors shadow-lg shadow-yellow-300"
-            >
-              Login
-            </Link>
-          )}
         </div>
       </div>
     </header>

@@ -5,13 +5,11 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import PoliciesModal from '@/components/PoliciesModal';
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-blue-50">
       <Header />
-      <PoliciesModal />
       <main className="flex-grow">
         {/* Animated Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-purple-700 text-white py-32 px-6">
