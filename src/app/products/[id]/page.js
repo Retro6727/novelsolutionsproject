@@ -1222,60 +1222,61 @@ export default function ProductDetail() {
               </p>
             </div>
             
-            {relatedProducts.length > 0 ? (
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
-                {relatedProducts.map(relatedProduct => (
-                  <div key={relatedProduct.id} className="group">
-                    <Link href={`/products/${relatedProduct.id}`}>
-                      <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-white/50 hover:border-blue-100">
-                        <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl overflow-hidden mb-6 group-hover:scale-105 transition-transform duration-300">
-                          {renderImage(relatedProduct.image)}
+{relatedProducts.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+                  {relatedProducts.map(relatedProduct => (
+                    <div key={relatedProduct.id} className="group">
+                      <Link href={`/products/${relatedProduct.id}`}>
+                        <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-white/50 hover:border-blue-100">
+                          <div className="aspect-[4/3] bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl overflow-hidden mb-6 group-hover:scale-105 transition-transform duration-300">
+                            {renderImage(relatedProduct.image)}
+                          </div>
+                          
+                          {/* Category Badge */}
+                          {relatedProduct.subcategory && (
+                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold mb-3 ${
+                              relatedProduct.subcategory === product.subcategory 
+                                ? 'bg-blue-100 text-blue-800' 
+                                : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {relatedProduct.subcategory}
+                            </span>
+                          )}
+                          
+                          <h4 className="font-bold text-xl text-gray-900 mb-3 line-clamp-2">{relatedProduct.name}</h4>
+                          <p className="text-2xl font-bold text-blue-600 mb-4">₹{relatedProduct.price?.toLocaleString()}</p>
+                          
+                          {/* Stock indicator */}
+                          <div className="flex items-center justify-between mb-4">
+                            <span className={`text-sm font-medium ${
+                              relatedProduct.stock > 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              {relatedProduct.stock > 0 ? `${relatedProduct.stock} in stock` : 'Out of stock'}
+                            </span>
+                            <span className="text-sm text-blue-600 font-semibold group-hover:underline">
+                              View Details →
+                            </span>
+                          </div>
                         </div>
-                        
-                        {/* Category Badge */}
-                        {relatedProduct.subcategory && (
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold mb-3 ${
-                            relatedProduct.subcategory === product.subcategory 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-gray-100 text-gray-600'
-                          }`}>
-                            {relatedProduct.subcategory}
-                          </span>
-                        )}
-                        
-                        <h4 className="font-bold text-xl text-gray-900 mb-3 line-clamp-2">{relatedProduct.name}</h4>
-                        <p className="text-2xl font-bold text-blue-600 mb-4">₹{relatedProduct.price?.toLocaleString()}</p>
-                        
-                        {/* Stock indicator */}
-                        <div className="flex items-center justify-between mb-4">
-                          <span className={`text-sm font-medium ${
-                            relatedProduct.stock > 0 ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {relatedProduct.stock > 0 ? `${relatedProduct.stock} in stock` : 'Out of stock'}
-                          </span>
-                          <span className="text-sm text-blue-600 font-semibold group-hover:underline">
-                            View Details →
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-              
-              {/* View All Products Link */}
-              <div className="text-center mt-12">
-                <Link 
-                  href={`/products?category=${encodeURIComponent(product.category)}`}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-1"
-                >
-                  View All {product.category} Products
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* View All Products Link */}
+                <div className="text-center mt-12">
+                  <Link 
+                    href={`/products?category=${encodeURIComponent(product.category)}`}
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-1"
+                  >
+                    View All {product.category} Products
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                </div>
+              </>
             ) : (
               <div className="text-center py-16">
                 <div className="text-6xl mb-6">🔍</div>
