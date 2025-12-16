@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build --turbopack",
     "start": "next start",
     "test": "jest --runInBand",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && next build"
+    "vercel-build": "prisma generate && next build --turbopack"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.0",

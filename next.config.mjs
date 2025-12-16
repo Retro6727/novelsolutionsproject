@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Fix for Next.js 16 - moved from experimental to top level
-  serverExternalPackages: ['@prisma/client'],
+  // Next.js 16 - External packages for server components
+  serverExternalPackages: ['@prisma/client', 'pg'],
   
+  // Image optimization configuration
   images: {
-    // Remove deprecated domains, use only remotePatterns
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,14 +13,35 @@ const nextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    // Next.js 16 optimizations
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
   },
   
-  // Add empty turbopack config to silence the warning
-  turbopack: {},
+  // Turbopack configuration (Next.js 16 default)
+  turbopack: {
+    // Enable experimental features if needed
+  },
   
-  // Optimize for Vercel deployment
+  // Performance optimizations
   poweredByHeader: false,
   compress: true,
+  
+  // Next.js 16 specific optimizations
+  experimental: {
+    // Enable optimized package imports
+    optimizePackageImports: ['@prisma/client'],
+    // Enable React compiler if available
+    reactCompiler: false,
+  },
+  
+  // Build optimizations
+  swcMinify: true,
+  
+  // Environment variables (if needed)
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
 };
 
 export default nextConfig;
