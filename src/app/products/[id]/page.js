@@ -1277,7 +1277,6 @@ export default function ProductDetail() {
                 </Link>
               </div>
             ) : (
-              /* No Related Products Found */
               <div className="text-center py-16">
                 <div className="text-6xl mb-6">🔍</div>
                 <h4 className="text-2xl font-bold text-gray-900 mb-4">No Related Products Found</h4>
