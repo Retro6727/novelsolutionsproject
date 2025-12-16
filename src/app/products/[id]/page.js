@@ -458,7 +458,7 @@ export default function ProductDetail() {
           setMainImage(found.image);
           
           // Find related products with intelligent matching
-          // Priority: 1. Same subcategory, 2. Same category, 3. Other products
+          // Priority: 1. Same subcategory, 2. Same category only (no other categories)
           const sameSubcategory = products.filter(p => 
             p.subcategory === found.subcategory && p.id !== found.id
           );
@@ -469,16 +469,11 @@ export default function ProductDetail() {
             p.id !== found.id
           );
           
-          const otherProducts = products.filter(p => 
-            p.category !== found.category && p.id !== found.id
-          );
-          
-          // Combine and limit to 8 products for better display
+          // Only show products from same category/subcategory - no unrelated products
           const related = [
-            ...sameSubcategory.slice(0, 4),
-            ...sameCategory.slice(0, 4),
-            ...otherProducts.slice(0, 2)
-          ].slice(0, 8);
+            ...sameSubcategory.slice(0, 6),  // Prioritize same subcategory
+            ...sameCategory.slice(0, 6)      // Then same category
+          ].slice(0, 8);  // Limit to 8 total
           
           setRelatedProducts(related);
           
@@ -1213,20 +1208,21 @@ export default function ProductDetail() {
         </section>
 
         {/* Related Products - Enhanced with better categorization */}
-        {relatedProducts.length > 0 && (
-          <section className="bg-white/50 backdrop-blur-sm py-20 px-6">
-            <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-12">
-                <h3 className="text-4xl font-bold text-gray-900 mb-4">
-                  {product.subcategory ? `More ${product.subcategory}` : `Related Products`}
-                </h3>
-                <p className="text-gray-600 text-lg">
-                  {product.subcategory 
-                    ? `Explore other products in the ${product.subcategory} category`
-                    : `You might also be interested in these products`
-                  }
-                </p>
-              </div>
+        <section className="bg-white/50 backdrop-blur-sm py-20 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h3 className="text-4xl font-bold text-gray-900 mb-4">
+                {product.subcategory ? `More ${product.subcategory} Products` : `More ${product.category} Products`}
+              </h3>
+              <p className="text-gray-600 text-lg">
+                {product.subcategory 
+                  ? `Explore other ${product.subcategory} products in our ${product.category} collection`
+                  : `Discover more products in the ${product.category} category`
+                }
+              </p>
+            </div>
+            
+            {relatedProducts.length > 0 ? (
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
                 {relatedProducts.map(relatedProduct => (
@@ -1280,9 +1276,27 @@ export default function ProductDetail() {
                   </svg>
                 </Link>
               </div>
-            </div>
-          </section>
-        )}
+            ) : (
+              /* No Related Products Found */
+              <div className="text-center py-16">
+                <div className="text-6xl mb-6">🔍</div>
+                <h4 className="text-2xl font-bold text-gray-900 mb-4">No Related Products Found</h4>
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                  We don't have other products in the {product.subcategory || product.category} category at the moment.
+                </p>
+                <Link 
+                  href="/products"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  Browse All Products
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
       </main>
 
       <Footer />
