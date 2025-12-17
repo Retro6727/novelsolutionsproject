@@ -466,42 +466,78 @@ export default function ProductsPage() {
               </div>
               <div className="w-full h-1 bg-gray-200 mb-8"></div>
 
-              {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Products Grid - Enhanced with better alignment */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
                 {sortedProducts.map(product => (
-                  <Link key={product.id} href={`/products/${product.id}`}>
-                    <div className="bg-white border rounded-xl overflow-hidden hover:shadow-xl transition cursor-pointer transform hover:-translate-y-1">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 h-48 flex items-center justify-center">
+                  <Link key={product.id} href={`/products/${product.id}`} className="group">
+                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-2xl hover:border-blue-300 transition-all duration-300 cursor-pointer transform hover:-translate-y-2 h-full flex flex-col">
+                      {/* Product Image - Fixed Height */}
+                      <div className="bg-gradient-to-br from-blue-50 to-purple-50 h-48 flex items-center justify-center relative overflow-hidden">
                         {product.image ? (
                           typeof product.image === 'string' ? (
                             product.image.startsWith('data:') || product.image.startsWith('http') ? (
-                              <img src={product.image} alt={product.name} className="max-h-40 object-contain" />
+                              <img 
+                                src={product.image} 
+                                alt={product.name} 
+                                className="max-h-40 max-w-full object-contain group-hover:scale-110 transition-transform duration-300" 
+                              />
                             ) : (
-                              <span className="text-6xl">{product.image}</span>
+                              <span className="text-6xl group-hover:scale-110 transition-transform duration-300">{product.image}</span>
                             )
                           ) : (
                             product.image.url ? (
-                              <img src={product.image.url} alt={product.name} className="max-h-40 object-contain" />
+                              <img 
+                                src={product.image.url} 
+                                alt={product.name} 
+                                className="max-h-40 max-w-full object-contain group-hover:scale-110 transition-transform duration-300" 
+                              />
                             ) : (
-                              <span className="text-5xl">📦</span>
+                              <span className="text-5xl text-gray-400 group-hover:scale-110 transition-transform duration-300">📦</span>
                             )
                           )
                         ) : (
-                          <span className="text-5xl">📦</span>
+                          <span className="text-5xl text-gray-400 group-hover:scale-110 transition-transform duration-300">📦</span>
                         )}
+                        
+                        {/* Category Badge */}
+                        <div className="absolute top-3 left-3">
+                          <span className="bg-white/90 backdrop-blur-sm text-gray-700 text-xs px-2 py-1 rounded-full font-medium shadow-sm">
+                            {product.category}
+                          </span>
+                        </div>
+                        
+                        {/* Stock Badge */}
+                        <div className="absolute top-3 right-3">
+                          <div className={`text-xs px-2 py-1 rounded-full font-medium shadow-sm ${
+                            product.stock > 0 
+                              ? 'bg-green-100 text-green-800 border border-green-200' 
+                              : 'bg-red-100 text-red-800 border border-red-200'
+                          }`}>
+                            {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="p-6">
-                        <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                        <p className="text-sm text-gray-500 mb-2">{product.category}</p>
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                          {product.description || 'No description available'}
-                        </p>
+                      {/* Product Content - Flexible Height */}
+                      <div className="p-6 flex flex-col flex-grow">
+                        {/* Product Title - Fixed Height */}
+                        <div className="mb-3">
+                          <h3 className="text-lg font-bold text-gray-900 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">
+                            {product.name}
+                          </h3>
+                        </div>
+                        
+                        {/* Product Description - Fixed Height */}
+                        <div className="mb-4 flex-grow">
+                          <p className="text-gray-600 text-sm line-clamp-3 min-h-[4.5rem]">
+                            {product.description || 'High-quality product designed for professional use. Contact us for detailed specifications and bulk pricing.'}
+                          </p>
+                        </div>
 
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-3xl font-bold text-blue-600">₹{product.price?.toLocaleString()}</span>
-                          {product.rating > 0 && (
-                            <div className="text-sm text-yellow-500 flex items-center gap-1">
+                        {/* Rating Section - Fixed Height */}
+                        <div className="mb-4 h-6 flex items-center">
+                          {product.rating > 0 ? (
+                            <div className="flex items-center gap-2">
                               <div className="flex">
                                 {Array.from({ length: 5 }, (_, i) => (
                                   <span key={i} className={`text-sm ${i < Math.round(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}>
@@ -509,25 +545,39 @@ export default function ProductsPage() {
                                   </span>
                                 ))}
                               </div>
-                              <span className="font-medium">{product.rating}</span>
+                              <span className="text-sm font-medium text-gray-700">{product.rating}</span>
+                              <span className="text-xs text-gray-500">({product.reviewCount} reviews)</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-gray-400">
+                              <div className="flex">
+                                {Array.from({ length: 5 }, (_, i) => (
+                                  <span key={i} className="text-sm text-gray-300">★</span>
+                                ))}
+                              </div>
+                              <span className="text-xs">No reviews yet</span>
                             </div>
                           )}
                         </div>
                         
-                        {/* Stock Status */}
-                        <div className="flex justify-end mb-4">
-                          <div className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            product.stock > 0 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                        {/* Price Section - Fixed Height */}
+                        <div className="mb-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-2xl font-bold text-blue-600">₹{product.price?.toLocaleString()}</span>
+                            {product.code && (
+                              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                {product.code}
+                              </span>
+                            )}
                           </div>
                         </div>
 
-                        <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                          View Product
-                        </button>
+                        {/* Action Button - Fixed at Bottom */}
+                        <div className="mt-auto">
+                          <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform group-hover:scale-105">
+                            View Details
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -535,8 +585,33 @@ export default function ProductsPage() {
               </div>
 
               {sortedProducts.length === 0 && (
-                <div className="text-center py-12 text-gray-500 text-lg">
-                  No products found matching your criteria.
+                <div className="col-span-full">
+                  <div className="text-center py-16 bg-white rounded-xl border-2 border-dashed border-gray-300">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">No Products Found</h3>
+                    <p className="text-gray-500 text-lg mb-6">
+                      No products match your current filters. Try adjusting your search criteria.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <button
+                        onClick={() => {
+                          setSelectedCategory('All Products');
+                          setPriceFilter(null);
+                          setRatingFilter(null);
+                          setSearchQuery('');
+                        }}
+                        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                      >
+                        Clear All Filters
+                      </button>
+                      <Link
+                        href="/contact"
+                        className="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
+                      >
+                        Request Custom Product
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
