@@ -216,9 +216,17 @@ function OverviewTab() {
         // Calculate statistics
         const totalProducts = normalizedProducts.length;
         const totalStock = normalizedProducts.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
-        const totalValue = normalizedProducts.reduce((sum, p) => sum + ((Number(p.price) || 0) * (Number(p.stock) || 0)), 0);
+        const totalValue = normalizedProducts.reduce((sum, p) => {
+          const price = Number(p.price) || 0;
+          const stock = Number(p.stock) || 0;
+          const itemValue = price * stock;
+          console.log(`📊 Product: ${p.name}, Price: ₹${price}, Stock: ${stock}, Value: ₹${itemValue}`);
+          return sum + itemValue;
+        }, 0);
         const categories = [...new Set(normalizedProducts.map(p => p.category))].filter(Boolean).length;
         const lowStockItems = normalizedProducts.filter(p => (Number(p.stock) || 0) < 10).length;
+        
+        console.log(`💰 Total Inventory Value: ₹${totalValue} (₹${(totalValue / 100000).toFixed(1)}L)`);
         const totalReviews = approvedReviews.length;
         const averageRating = totalReviews > 0 
           ? (approvedReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
@@ -299,7 +307,9 @@ function OverviewTab() {
     },
     { 
       label: 'Inventory Value', 
-      value: loading ? '...' : `₹${(dashboardData.totalValue / 100000).toFixed(1)}L`, 
+      value: loading ? '...' : dashboardData.totalValue >= 100000 
+        ? `₹${(dashboardData.totalValue / 100000).toFixed(1)}L` 
+        : `₹${dashboardData.totalValue.toLocaleString('en-IN')}`, 
       color: 'orange',
       icon: '💰'
     },
@@ -331,6 +341,11 @@ function OverviewTab() {
               <span className="text-2xl">{stat.icon}</span>
             </div>
             <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
+            {stat.label === 'Inventory Value' && !loading && (
+              <p className="text-xs text-gray-500 mt-1">
+                Total value of all products (Price × Stock)
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -797,6 +812,8 @@ function ProductsTab() {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
     setImportErrors([]);
+    setImportStatus({ loading: true, message: 'Processing file...', type: 'info' });
+    
     try {
       const name = file.name.toLowerCase();
       if (name.endsWith('.pdf')) {
@@ -838,12 +855,14 @@ function ProductsTab() {
   function parseTextToPreview(text) {
     if (!text || !text.trim()) {
       setImportErrors(['No text extracted from file']);
+      setImportStatus({ loading: false, message: '❌ No text found in file', type: 'error' });
       return;
     }
 
     const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (lines.length === 0) {
       setImportErrors(['No items parsed from file']);
+      setImportStatus({ loading: false, message: '❌ No content found to parse', type: 'error' });
       return;
     }
 
@@ -878,7 +897,7 @@ function ProductsTab() {
         const cols = line.split(/,|\t|\||;/).map(c => c.trim());
         if (cols.length === 0) continue;
 
-        let item = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+        let item = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
 
         headerCols.forEach((header, idx) => {
           const val = (cols[idx] || '').trim();
@@ -887,6 +906,8 @@ function ProductsTab() {
           // Enhanced header matching
           if (header.includes('name') || header.includes('title') || header.includes('product')) {
             item.name = val;
+          } else if (header.includes('subcategory') || header.includes('sub-category') || header.includes('subcat')) {
+            item.subcategory = val;
           } else if (header.includes('category') || header.includes('type') || header.includes('class')) {
             item.category = val;
           } else if (header.includes('price') || header.includes('cost') || header.includes('amount')) {
@@ -899,6 +920,8 @@ function ProductsTab() {
             item.stock = parseInt(val.replace(/[^0-9]/g, '')) || 0;
           } else if (header.includes('image') || header.includes('img') || header.includes('photo')) {
             item.image = val;
+          } else if (header.includes('spec') || header.includes('specification')) {
+            item.specifications = val;
           }
         });
 
@@ -927,7 +950,7 @@ function ProductsTab() {
         // Price pattern - strong indicator of a product
         const priceMatch = line.match(productPatterns.price);
         if (priceMatch) {
-          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
           currentProduct.price = parseFloat(priceMatch[1].replace(/,/g, '')) || 0;
           foundPattern = true;
         }
@@ -935,7 +958,7 @@ function ProductsTab() {
         // Code/SKU pattern
         const codeMatch = line.match(productPatterns.code);
         if (codeMatch) {
-          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
           currentProduct.code = codeMatch[1];
           foundPattern = true;
         }
@@ -943,7 +966,7 @@ function ProductsTab() {
         // Category pattern
         const categoryMatch = line.match(productPatterns.category);
         if (categoryMatch) {
-          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
           currentProduct.category = categoryMatch[1].trim();
           foundPattern = true;
         }
@@ -951,7 +974,7 @@ function ProductsTab() {
         // Stock pattern
         const stockMatch = line.match(productPatterns.stock);
         if (stockMatch) {
-          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
           currentProduct.stock = parseInt(stockMatch[1]) || 0;
           foundPattern = true;
         }
@@ -959,7 +982,7 @@ function ProductsTab() {
         // Description pattern
         const descMatch = line.match(productPatterns.description);
         if (descMatch) {
-          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
           currentProduct.description = descMatch[1].trim();
           foundPattern = true;
         }
@@ -967,7 +990,7 @@ function ProductsTab() {
         // Name pattern or potential product name
         const nameMatch = line.match(productPatterns.name);
         if (nameMatch) {
-          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', code: '', description: '', stock: 0, include: true };
+          if (!currentProduct) currentProduct = { image: '', name: '', price: 0, category: '', subcategory: '', code: '', description: '', stock: 0, specifications: '', include: true };
           currentProduct.name = nameMatch[1].trim();
           foundPattern = true;
         } else if (!foundPattern && line.length > 5 && line.length < 100) {
@@ -986,9 +1009,11 @@ function ProductsTab() {
               name: line, 
               price: 0, 
               category: '', 
+              subcategory: '',
               code: '', 
               description: '', 
               stock: 0, 
+              specifications: '',
               include: true 
             };
             foundPattern = true;
@@ -1032,6 +1057,11 @@ function ProductsTab() {
 
     setImportPreview(validItems);
     setImportOpen(true);
+    setImportStatus({ 
+      loading: false, 
+      message: `✅ Found ${validItems.length} products ready for import. Review and click "Import Selected".`, 
+      type: 'success' 
+    });
   }
 
   const updatePreviewItem = (idx, field, value) => {
@@ -1049,40 +1079,241 @@ function ProductsTab() {
     reader.readAsDataURL(file);
   };
 
+  const [importStatus, setImportStatus] = useState({ loading: false, message: '', type: '' });
+
   const importSelectedItems = async () => {
+    console.log('🚀 Import button clicked, starting import process...');
     const toImport = importPreview.filter(it => it.include !== false);
-    if (!toImport.length) return;
+    console.log('📦 Items to import:', toImport.length, toImport);
+    
+    if (!toImport.length) {
+      setImportStatus({ loading: false, message: 'No items selected for import', type: 'warning' });
+      return;
+    }
+
+    // Simple test - just show an alert to confirm the function is called
+    alert(`Import function called with ${toImport.length} items. Check console for details.`);
+    console.log('🔍 First item to import:', toImport[0]);
+
+    setImportStatus({ loading: true, message: `Importing ${toImport.length} items...`, type: 'info' });
+    
     try {
-      const created = []
-      for (const item of toImport) {
-        const res = await fetch('/api/product', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: item.name,
-            category: item.category,
-            subcategory: item.subcategory || '',
+      const created = [];
+      const failed = [];
+      
+      for (let i = 0; i < toImport.length; i++) {
+        const item = toImport[i];
+        setImportStatus({ 
+          loading: true, 
+          message: `Importing item ${i + 1} of ${toImport.length}: ${item.name}...`, 
+          type: 'info' 
+        });
+
+        try {
+          // Validate required fields
+          if (!item.name || !item.category) {
+            failed.push({ item: item.name || 'Unnamed item', error: 'Missing name or category' });
+            continue;
+          }
+
+          const productData = {
+            name: item.name.trim(),
+            category: item.category.trim(),
+            subcategory: (item.subcategory || item.category || 'General').trim(),
             price: Number(item.price) || 0,
             stock: Number(item.stock) || 0,
-            code: item.code || item.sku || String(Date.now() + Math.random()).slice(0,10),
+            code: item.code || item.sku || `AUTO-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
             image: item.image || null,
-            description: item.description || null,
-            specifications: item.specifications || null,
-          }),
-        })
-        if (res.ok) {
-          created.push(await res.json())
+            description: (item.description || '').trim() || null,
+            specifications: (item.specifications || '').trim() || null,
+          };
+          
+          console.log('📤 Sending product data:', productData);
+          
+          const res = await fetch('/api/product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productData),
+          });
+
+          console.log('📥 API Response status:', res.status, res.statusText);
+          
+          if (res.ok) {
+            const newProduct = await res.json();
+            created.push(newProduct);
+            console.log('✅ Successfully imported:', item.name, newProduct);
+          } else {
+            const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('❌ Failed to import:', item.name, 'Status:', res.status, 'Error:', errorData);
+            failed.push({ item: item.name, error: errorData.error || `HTTP ${res.status}` });
+          }
+        } catch (itemError) {
+          failed.push({ item: item.name, error: itemError.message });
+          console.error('❌ Import error for item:', item.name, itemError);
+        }
+
+        // Small delay to prevent overwhelming the server
+        if (i < toImport.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
         }
       }
-      if (created.length) {
+
+      // Update products list with successfully created items
+      if (created.length > 0) {
         const updatedProducts = [...products, ...created];
         setProducts(updatedProducts);
       }
+
+      // Show final status
+      let finalMessage = '';
+      let finalType = 'success';
+
+      if (created.length > 0 && failed.length === 0) {
+        finalMessage = `✅ Successfully imported all ${created.length} items!`;
+        finalType = 'success';
+      } else if (created.length > 0 && failed.length > 0) {
+        finalMessage = `⚠️ Imported ${created.length} items successfully, ${failed.length} failed.`;
+        finalType = 'warning';
+      } else if (failed.length > 0) {
+        finalMessage = `❌ Failed to import all ${failed.length} items.`;
+        finalType = 'error';
+      }
+
+      // Show detailed errors if any
+      if (failed.length > 0) {
+        console.error('Import failures:', failed);
+        finalMessage += ` Errors: ${failed.map(f => `${f.item}: ${f.error}`).join('; ')}`;
+      }
+
+      setImportStatus({ loading: false, message: finalMessage, type: finalType });
+
+      // Auto-hide success message after 3 seconds
+      if (finalType === 'success') {
+        setTimeout(() => {
+          setImportStatus({ loading: false, message: '', type: '' });
+          setImportPreview([]);
+          setImportOpen(false);
+        }, 3000);
+      }
+
     } catch (e) {
-      console.error('Import failed', e)
+      console.error('❌ Import process failed:', e);
+      setImportStatus({ 
+        loading: false, 
+        message: `❌ Import failed: ${e.message}`, 
+        type: 'error' 
+      });
     }
-    setImportPreview([]);
-    setImportOpen(false);
+
+    setImportStatus({ loading: true, message: `Importing ${toImport.length} items...`, type: 'info' });
+    
+    try {
+      const created = [];
+      const failed = [];
+      
+      for (let i = 0; i < toImport.length; i++) {
+        const item = toImport[i];
+        setImportStatus({ 
+          loading: true, 
+          message: `Importing item ${i + 1} of ${toImport.length}: ${item.name}...`, 
+          type: 'info' 
+        });
+
+        try {
+          // Validate required fields
+          if (!item.name || !item.category) {
+            failed.push({ item: item.name || 'Unnamed item', error: 'Missing name or category' });
+            continue;
+          }
+
+          const productData = {
+            name: item.name.trim(),
+            category: item.category.trim(),
+            subcategory: (item.subcategory || item.category || 'General').trim(),
+            price: Number(item.price) || 0,
+            stock: Number(item.stock) || 0,
+            code: item.code || item.sku || `AUTO-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+            image: item.image || null,
+            description: (item.description || '').trim() || null,
+            specifications: (item.specifications || '').trim() || null,
+          };
+          
+          console.log('📤 Sending product data:', productData);
+          
+          const res = await fetch('/api/product', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productData),
+          });
+
+          console.log('📥 API Response status:', res.status, res.statusText);
+          
+          if (res.ok) {
+            const newProduct = await res.json();
+            created.push(newProduct);
+            console.log('✅ Successfully imported:', item.name, newProduct);
+          } else {
+            const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+            console.error('❌ Failed to import:', item.name, 'Status:', res.status, 'Error:', errorData);
+            failed.push({ item: item.name, error: errorData.error || `HTTP ${res.status}` });
+          }
+        } catch (itemError) {
+          failed.push({ item: item.name, error: itemError.message });
+          console.error('❌ Import error for item:', item.name, itemError);
+        }
+
+        // Small delay to prevent overwhelming the server
+        if (i < toImport.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+
+      // Update products list with successfully created items
+      if (created.length > 0) {
+        const updatedProducts = [...products, ...created];
+        setProducts(updatedProducts);
+      }
+
+      // Show final status
+      let finalMessage = '';
+      let finalType = 'success';
+
+      if (created.length > 0 && failed.length === 0) {
+        finalMessage = `✅ Successfully imported all ${created.length} items!`;
+        finalType = 'success';
+      } else if (created.length > 0 && failed.length > 0) {
+        finalMessage = `⚠️ Imported ${created.length} items successfully, ${failed.length} failed.`;
+        finalType = 'warning';
+      } else if (failed.length > 0) {
+        finalMessage = `❌ Failed to import all ${failed.length} items.`;
+        finalType = 'error';
+      }
+
+      // Show detailed errors if any
+      if (failed.length > 0) {
+        console.error('Import failures:', failed);
+        finalMessage += ` Errors: ${failed.map(f => `${f.item}: ${f.error}`).join('; ')}`;
+      }
+
+      setImportStatus({ loading: false, message: finalMessage, type: finalType });
+
+      // Auto-hide success message after 3 seconds
+      if (finalType === 'success') {
+        setTimeout(() => {
+          setImportStatus({ loading: false, message: '', type: '' });
+          setImportPreview([]);
+          setImportOpen(false);
+        }, 3000);
+      }
+
+    } catch (e) {
+      console.error('❌ Import process failed:', e);
+      setImportStatus({ 
+        loading: false, 
+        message: `❌ Import failed: ${e.message}`, 
+        type: 'error' 
+      });
+    }
   };
 
 
@@ -1729,10 +1960,28 @@ function ProductsTab() {
             <p className="mt-2 text-blue-600"><strong>Tip:</strong> For best results, use structured formats like CSV with headers (Name, Price, Category, Code, Stock, Description)</p>
           </div>
           <input type="file" accept=".csv,.txt,.pdf,.doc,.docx" onChange={handleFileInput} className="mb-4" />
+          
+          {/* Import Status Display */}
+          {importStatus.message && (
+            <div className={`mb-4 p-4 rounded-lg border ${
+              importStatus.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              importStatus.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              importStatus.type === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-800' :
+              'bg-blue-50 border-blue-200 text-blue-800'
+            }`}>
+              <div className="flex items-center gap-2">
+                {importStatus.loading && (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent"></div>
+                )}
+                <span className="font-medium">{importStatus.message}</span>
+              </div>
+            </div>
+          )}
+          
           {importErrors.length > 0 && (
             <div className="mb-4">
               {importErrors.map((err, i) => (
-                <div key={i} className="text-red-600">{err}</div>
+                <div key={i} className="text-red-600 bg-red-50 p-2 rounded border border-red-200 mb-2">{err}</div>
               ))}
             </div>
           )}
@@ -1789,8 +2038,63 @@ function ProductsTab() {
                 </table>
               </div>
               <div className="mt-4 flex gap-3">
-                <button onClick={importSelectedItems} className="bg-green-600 text-white px-4 py-2 rounded">Import Selected</button>
-                <button onClick={() => { setImportPreview([]); setImportOpen(false); }} className="bg-gray-200 px-4 py-2 rounded">Cancel</button>
+                <button 
+                  type="button"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔥 Button clicked!');
+                    console.log('📊 Import status:', importStatus);
+                    console.log('📋 Import preview:', importPreview);
+                    
+                    // Test API connectivity first
+                    try {
+                      console.log('🧪 Testing API connectivity...');
+                      const testRes = await fetch('/api/product', { method: 'GET' });
+                      console.log('🧪 API Test Response:', testRes.status, testRes.statusText);
+                      if (testRes.ok) {
+                        const testData = await testRes.json();
+                        console.log('🧪 API Test Data:', testData);
+                      } else {
+                        console.error('🧪 API Test Failed:', await testRes.text());
+                      }
+                    } catch (testError) {
+                      console.error('🧪 API Test Error:', testError);
+                    }
+                    
+                    importSelectedItems();
+                  }} 
+                  disabled={importStatus.loading}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                    importStatus.loading 
+                      ? 'bg-gray-400 text-white cursor-not-allowed' 
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                >
+                  {importStatus.loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      Importing...
+                    </div>
+                  ) : (
+                    `Import Selected (${importPreview.filter(it => it.include !== false).length})`
+                  )}
+                </button>
+                <button 
+                  onClick={() => { 
+                    setImportPreview([]); 
+                    setImportOpen(false); 
+                    setImportStatus({ loading: false, message: '', type: '' });
+                  }} 
+                  disabled={importStatus.loading}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-colors ${
+                    importStatus.loading 
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           )}

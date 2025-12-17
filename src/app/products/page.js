@@ -253,32 +253,72 @@ export default function ProductsPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-neutral-50 via-white to-blue-50/30">
       <Header />
 
-      <main className="flex-grow">
-        {/* Breadcrumb */}
-        <div className="bg-white px-6 py-4 shadow-sm">
+      <main className="flex-grow relative overflow-hidden">
+        {/* Enhanced Breadcrumb */}
+        <div className="glass border-b border-white/20 px-6 py-4">
           <div className="max-w-7xl mx-auto">
-            <Link href="/" className="text-blue-600 hover:underline">Home</Link>
-            <span className="text-gray-500 mx-2">/</span>
-            <span className="text-gray-700">Products</span>
+            <nav className="flex items-center space-x-2 text-sm">
+              <Link href="/" className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                Home
+              </Link>
+              <span className="text-neutral-400">→</span>
+              <span className="font-heading font-semibold text-neutral-700">Products</span>
+            </nav>
           </div>
         </div>
 
-        {/* Page Header */}
-        <section className="px-6 py-12 bg-white border-b">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-5xl font-bold mb-4 text-gray-900">Our Products</h1>
-            <p className="text-gray-600 text-xl">Browse our comprehensive catalog of high-quality manufacturing products</p>
+        {/* Enhanced Page Header */}
+        <section className="relative px-6 py-20 gradient-hero text-white overflow-hidden">
+          {/* Background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-float" />
+            <div className="absolute bottom-10 left-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl" />
+          </div>
+          
+          <div className="relative max-w-7xl mx-auto text-center">
+            <div className="inline-block mb-6">
+              <span className="glass px-6 py-3 rounded-full text-sm font-heading font-semibold border border-white/20">
+                🏭 Premium Manufacturing Catalog
+              </span>
+            </div>
+            
+            <h1 className="font-display text-6xl lg:text-7xl font-black mb-6 leading-tight">
+              <span className="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent animate-gradient">
+                Our Products
+              </span>
+            </h1>
+            
+            <p className="font-body text-xl lg:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-8">
+              Discover our comprehensive catalog of 
+              <span className="font-semibold text-white"> premium manufacturing products</span> designed for professional excellence
+            </p>
+            
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center gap-8 text-blue-200">
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                <span className="font-body text-sm">Quality Assured</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                <span className="font-body text-sm">Bulk Orders</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">✓</span>
+                <span className="font-body text-sm">Fast Delivery</span>
+              </div>
+            </div>
           </div>
         </section>
 
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-            {/* SIDEBAR (unchanged) */}
-            <div className={`lg:col-span-1 bg-white p-6 rounded-lg shadow-md ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
+            {/* Enhanced Sidebar */}
+            <div className={`lg:col-span-1 glass p-8 rounded-2xl shadow-professional-lg border border-white/20 ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="lg:hidden mb-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
@@ -288,7 +328,7 @@ export default function ProductsPage() {
 
               {/* Categories */}
               <div className="mb-8">
-                <h3 className="text-xl font-bold mb-4">Categories</h3>
+                <h3 className="font-heading text-2xl font-bold mb-6 gradient-text">Categories</h3>
                 <div className="space-y-2">
                   <button
                     onClick={() => setSelectedCategory('All Products')}
@@ -339,7 +379,7 @@ export default function ProductsPage() {
 
               {/* Price Filter */}
               <div className="mb-8">
-                <h3 className="text-xl font-bold mb-4">Price Range</h3>
+                <h3 className="font-heading text-2xl font-bold mb-6 gradient-text">Price Range</h3>
                 <div className="space-y-3">
                   {[
                     { label: "All Prices", value: null },
@@ -364,7 +404,7 @@ export default function ProductsPage() {
 
               {/* Rating Filter */}
               <div>
-                <h3 className="text-xl font-bold mb-4">Customer Reviews</h3>
+                <h3 className="font-heading text-2xl font-bold mb-6 gradient-text">Customer Reviews</h3>
                 <div className="space-y-3">
                   <label className="flex items-center">
                     <input
@@ -415,37 +455,45 @@ export default function ProductsPage() {
             {/* MAIN CONTENT WITH NEW SECTION */}
             <div className="lg:col-span-3">
 
-              {/* Search Bar */}
-              <div className="mb-6">
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 border rounded-lg"
-                />
+              {/* Enhanced Search Bar */}
+              <div className="mb-8">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-6 py-4 pl-12 glass border border-white/20 rounded-2xl font-body text-lg placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                  />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400">
+                    🔍
+                  </div>
+                </div>
               </div>
 
-              {/* Sort Bar */}
-              <div className="flex justify-between items-center mb-8 pb-4 border-b bg-white p-4 rounded-lg shadow-sm">
-                <p className="text-gray-600">
-                  Showing <span className="font-bold">{sortedProducts.length}</span> products
-                </p>
+              {/* Enhanced Sort Bar */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 glass p-6 rounded-2xl border border-white/20 shadow-professional">
+                <div className="font-body text-neutral-600">
+                  Showing <span className="font-heading font-bold text-neutral-800">{sortedProducts.length}</span> products
+                  {selectedCategory !== 'All Products' && (
+                    <span className="ml-2 text-sm">in <span className="font-semibold">{selectedCategory}</span></span>
+                  )}
+                </div>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="border rounded-lg px-4 py-2"
+                  className="glass border border-white/20 rounded-xl px-4 py-3 font-body focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                 >
-                  <option value="newest">Newest</option>
+                  <option value="newest">Newest First</option>
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="rating">Highest Rated</option>
                 </select>
               </div>
 
-              {/* ⭐ SELECTED CATEGORY TITLE + DIVIDER */}
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-3xl font-bold">{selectedCategory}</h2>
+              {/* Enhanced Category Title */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h2 className="font-display text-4xl lg:text-5xl font-black gradient-text">{selectedCategory}</h2>
                 
                 {/* Review Statistics */}
                 {sortedProducts.length > 0 && (
@@ -464,13 +512,13 @@ export default function ProductsPage() {
                   </div>
                 )}
               </div>
-              <div className="w-full h-1 bg-gray-200 mb-8"></div>
+              <div className="w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-12 shadow-lg"></div>
 
               {/* Products Grid - Enhanced with better alignment */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
                 {sortedProducts.map(product => (
                   <Link key={product.id} href={`/products/${product.id}`} className="group">
-                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-2xl hover:border-blue-300 transition-all duration-300 cursor-pointer transform hover:-translate-y-2 h-full flex flex-col">
+                    <div className="glass border border-white/20 rounded-2xl overflow-hidden hover:shadow-professional-xl hover:border-blue-300/50 transition-all duration-500 cursor-pointer transform hover:-translate-y-3 hover:scale-105 h-full flex flex-col group-hover:bg-white/80 backdrop-blur-xl">
                       {/* Product Image - Fixed Height */}
                       <div className="bg-gradient-to-br from-blue-50 to-purple-50 h-48 flex items-center justify-center relative overflow-hidden">
                         {product.image ? (
@@ -519,17 +567,17 @@ export default function ProductsPage() {
                       </div>
 
                       {/* Product Content - Flexible Height */}
-                      <div className="p-6 flex flex-col flex-grow">
+                      <div className="p-8 flex flex-col flex-grow">
                         {/* Product Title - Fixed Height */}
                         <div className="mb-3">
-                          <h3 className="text-lg font-bold text-gray-900 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">
+                          <h3 className="font-heading text-xl font-bold text-neutral-900 line-clamp-2 min-h-[3.5rem] group-hover:text-blue-600 transition-colors">
                             {product.name}
                           </h3>
                         </div>
                         
                         {/* Product Description - Fixed Height */}
                         <div className="mb-4 flex-grow">
-                          <p className="text-gray-600 text-sm line-clamp-3 min-h-[4.5rem]">
+                          <p className="font-body text-neutral-600 text-sm line-clamp-3 min-h-[4.5rem] leading-relaxed">
                             {product.description || 'High-quality product designed for professional use. Contact us for detailed specifications and bulk pricing.'}
                           </p>
                         </div>
@@ -563,7 +611,7 @@ export default function ProductsPage() {
                         {/* Price Section - Fixed Height */}
                         <div className="mb-4">
                           <div className="flex items-center justify-between">
-                            <span className="text-2xl font-bold text-blue-600">₹{product.price?.toLocaleString()}</span>
+                            <span className="font-display text-3xl font-black gradient-text">₹{product.price?.toLocaleString()}</span>
                             {product.code && (
                               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
                                 {product.code}
@@ -574,7 +622,7 @@ export default function ProductsPage() {
 
                         {/* Action Button - Fixed at Bottom */}
                         <div className="mt-auto">
-                          <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform group-hover:scale-105">
+                          <button className="w-full gradient-primary text-white py-4 rounded-xl hover:shadow-professional-lg transition-all duration-300 font-heading font-bold shadow-professional transform group-hover:scale-105 group-hover:-translate-y-1">
                             View Details
                           </button>
                         </div>
