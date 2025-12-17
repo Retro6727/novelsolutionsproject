@@ -1548,15 +1548,145 @@ function ProductsTab() {
                 Specifications 
                 <span className="text-xs text-gray-500 font-normal ml-2">(One specification per line)</span>
               </label>
+              
+              {/* Formatting Toolbar */}
+              <div className="mb-3 flex flex-wrap gap-2 p-3 bg-gray-50 rounded-lg border">
+                <div className="text-xs font-semibold text-gray-600 mr-2">Quick Format:</div>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    const textarea = document.querySelector('textarea[placeholder*="specifications"]');
+                    const cursorPos = textarea.selectionStart;
+                    const textBefore = formData.specifications.substring(0, cursorPos);
+                    const textAfter = formData.specifications.substring(cursorPos);
+                    const newText = textBefore + (textBefore.endsWith('\n') || textBefore === '' ? '' : '\n') + '• ';
+                    setFormData({ ...formData, specifications: newText + textAfter });
+                    setTimeout(() => {
+                      textarea.focus();
+                      textarea.setSelectionRange(newText.length, newText.length);
+                    }, 10);
+                  }}
+                  className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors flex items-center gap-1"
+                >
+                  <span>•</span> Bullet Point
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    const textarea = document.querySelector('textarea[placeholder*="specifications"]');
+                    const cursorPos = textarea.selectionStart;
+                    const textBefore = formData.specifications.substring(0, cursorPos);
+                    const textAfter = formData.specifications.substring(cursorPos);
+                    
+                    // Count existing numbered items to get next number
+                    const lines = formData.specifications.split('\n');
+                    const numberedLines = lines.filter(line => /^\d+\./.test(line.trim()));
+                    const nextNumber = numberedLines.length + 1;
+                    
+                    const newText = textBefore + (textBefore.endsWith('\n') || textBefore === '' ? '' : '\n') + `${nextNumber}. `;
+                    setFormData({ ...formData, specifications: newText + textAfter });
+                    setTimeout(() => {
+                      textarea.focus();
+                      textarea.setSelectionRange(newText.length, newText.length);
+                    }, 10);
+                  }}
+                  className="px-3 py-1 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200 transition-colors flex items-center gap-1"
+                >
+                  <span>1.</span> Numbered
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    const textarea = document.querySelector('textarea[placeholder*="specifications"]');
+                    const cursorPos = textarea.selectionStart;
+                    const textBefore = formData.specifications.substring(0, cursorPos);
+                    const textAfter = formData.specifications.substring(cursorPos);
+                    const newText = textBefore + (textBefore.endsWith('\n') || textBefore === '' ? '' : '\n') + '- ';
+                    setFormData({ ...formData, specifications: newText + textAfter });
+                    setTimeout(() => {
+                      textarea.focus();
+                      textarea.setSelectionRange(newText.length, newText.length);
+                    }, 10);
+                  }}
+                  className="px-3 py-1 bg-purple-100 text-purple-700 rounded text-xs hover:bg-purple-200 transition-colors flex items-center gap-1"
+                >
+                  <span>-</span> Dash
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    const commonSpecs = [
+                      '• Material: ',
+                      '• Dimensions: ',
+                      '• Weight: ',
+                      '• Color: ',
+                      '• Warranty: ',
+                      '• Power: ',
+                      '• Capacity: ',
+                      '• Features: '
+                    ].join('\n');
+                    
+                    const currentSpecs = formData.specifications.trim();
+                    const newSpecs = currentSpecs ? currentSpecs + '\n' + commonSpecs : commonSpecs;
+                    setFormData({ ...formData, specifications: newSpecs });
+                  }}
+                  className="px-3 py-1 bg-orange-100 text-orange-700 rounded text-xs hover:bg-orange-200 transition-colors flex items-center gap-1"
+                >
+                  <span>📋</span> Template
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Renumber all numbered items
+                    const lines = formData.specifications.split('\n');
+                    let counter = 1;
+                    const renumberedLines = lines.map(line => {
+                      if (/^\d+\./.test(line.trim())) {
+                        return line.replace(/^\d+\./, `${counter++}.`);
+                      }
+                      return line;
+                    });
+                    setFormData({ ...formData, specifications: renumberedLines.join('\n') });
+                  }}
+                  className="px-3 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors flex items-center gap-1"
+                >
+                  <span>🔢</span> Renumber
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData({ ...formData, specifications: '' });
+                  }}
+                  className="px-3 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200 transition-colors flex items-center gap-1"
+                >
+                  <span>🗑️</span> Clear
+                </button>
+              </div>
+              
               <textarea
                 value={formData.specifications}
                 onChange={(e) => setFormData({ ...formData, specifications: e.target.value })}
-                placeholder="Enter product specifications, one per line:&#10;• Material: Stainless Steel&#10;• Dimensions: 120x60x75 cm&#10;• Weight: 25 kg&#10;• Warranty: 2 Years&#10;• Color: Black/Silver"
+                placeholder="Enter product specifications, one per line:&#10;• Material: Stainless Steel&#10;• Dimensions: 120x60x75 cm&#10;• Weight: 25 kg&#10;• Warranty: 2 Years&#10;• Color: Black/Silver&#10;&#10;Or use the formatting buttons above for quick entry!"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-                rows={6}
+                rows={8}
               />
-              <div className="mt-2 text-xs text-gray-500">
-                💡 <strong>Tips:</strong> Use bullet points (•) or dashes (-) for better formatting. Each line will be displayed as a separate specification.
+              
+              <div className="mt-2 text-xs text-gray-500 space-y-1">
+                <div>💡 <strong>Formatting Options:</strong></div>
+                <div className="ml-4 space-y-1">
+                  <div><span className="font-mono bg-gray-100 px-1 rounded">• Text</span> - Bullet points</div>
+                  <div><span className="font-mono bg-gray-100 px-1 rounded">1. Text</span> - Numbered list</div>
+                  <div><span className="font-mono bg-gray-100 px-1 rounded">- Text</span> - Dash points</div>
+                </div>
+                <div className="mt-2 text-blue-600">
+                  <strong>Tip:</strong> Use the buttons above for quick formatting, or type manually. Each line becomes a separate specification.
+                </div>
               </div>
             </div>
             

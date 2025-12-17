@@ -707,12 +707,39 @@ export default function ProductDetail() {
                         <h4 className="text-xl font-bold text-gray-900 mt-8 mb-4">Product Specifications</h4>
                         <div className="bg-white/50 rounded-xl backdrop-blur-sm p-6">
                           <ul className="space-y-3">
-                            {product.specifications.split('\n').filter(spec => spec.trim()).map((spec, idx) => (
-                              <li key={idx} className="flex items-start gap-3 p-3 bg-white/30 rounded-lg">
-                                <span className="text-blue-600 font-bold text-xl mt-0.5 flex-shrink-0">•</span>
-                                <span className="text-gray-700">{spec.trim().replace(/^[•\-\*]\s*/, '')}</span>
-                              </li>
-                            ))}
+                            {product.specifications.split('\n').filter(spec => spec.trim()).map((spec, idx) => {
+                              const trimmedSpec = spec.trim();
+                              let displayText = trimmedSpec;
+                              let bulletStyle = '•'; // default bullet
+                              
+                              // Check for different formatting styles
+                              if (trimmedSpec.match(/^\d+\.\s*/)) {
+                                // Numbered list (1. 2. 3.)
+                                bulletStyle = trimmedSpec.match(/^\d+\./)[0];
+                                displayText = trimmedSpec.replace(/^\d+\.\s*/, '');
+                              } else if (trimmedSpec.startsWith('• ')) {
+                                // Bullet point
+                                bulletStyle = '•';
+                                displayText = trimmedSpec.replace(/^•\s*/, '');
+                              } else if (trimmedSpec.startsWith('- ')) {
+                                // Dash point
+                                bulletStyle = '−'; // en-dash for better styling
+                                displayText = trimmedSpec.replace(/^-\s*/, '');
+                              } else if (trimmedSpec.match(/^[•\-\*]\s*/)) {
+                                // Other bullet styles
+                                bulletStyle = trimmedSpec.charAt(0);
+                                displayText = trimmedSpec.replace(/^[•\-\*]\s*/, '');
+                              }
+                              
+                              return (
+                                <li key={idx} className="flex items-start gap-3 p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                                  <span className="text-blue-600 font-bold text-lg mt-0.5 flex-shrink-0 min-w-[1.5rem]">
+                                    {bulletStyle}
+                                  </span>
+                                  <span className="text-gray-700 leading-relaxed">{displayText}</span>
+                                </li>
+                              );
+                            })}
                           </ul>
                         </div>
                       </>
