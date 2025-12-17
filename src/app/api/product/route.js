@@ -41,6 +41,7 @@ export async function POST(req) {
         code: String(data.code),
         image: data.image ? String(data.image) : null,
         description: data.description ? String(data.description) : null,
+        specifications: data.specifications ? String(data.specifications) : null,
       },
     })
 
@@ -72,6 +73,7 @@ export async function PUT(req) {
         ...(data.code != null && { code: String(data.code) }),
         ...(data.image !== undefined && { image: data.image ? String(data.image) : null }),
         ...(data.description !== undefined && { description: data.description ? String(data.description) : null }),
+        ...(data.specifications !== undefined && { specifications: data.specifications ? String(data.specifications) : null }),
       },
     })
 

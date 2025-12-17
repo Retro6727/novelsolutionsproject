@@ -701,16 +701,16 @@ export default function ProductDetail() {
                       ))}
                     </div>
 
-                    {/* Additional technical specifications from product data */}
-                    {product.specifications?.length > 0 && (
+                    {/* Custom Product Specifications */}
+                    {product.specifications && (
                       <>
-                        <h4 className="text-xl font-bold text-gray-900 mt-8 mb-4">Additional Technical Details</h4>
+                        <h4 className="text-xl font-bold text-gray-900 mt-8 mb-4">Product Specifications</h4>
                         <div className="bg-white/50 rounded-xl backdrop-blur-sm p-6">
                           <ul className="space-y-3">
-                            {product.specifications.map((spec, idx) => (
+                            {product.specifications.split('\n').filter(spec => spec.trim()).map((spec, idx) => (
                               <li key={idx} className="flex items-start gap-3 p-3 bg-white/30 rounded-lg">
                                 <span className="text-blue-600 font-bold text-xl mt-0.5 flex-shrink-0">•</span>
-                                <span className="text-gray-700">{spec}</span>
+                                <span className="text-gray-700">{spec.trim().replace(/^[•\-\*]\s*/, '')}</span>
                               </li>
                             ))}
                           </ul>

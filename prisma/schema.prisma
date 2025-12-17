@@ -8,17 +8,18 @@ datasource db {
 }
 
 model Products {
-  id          Int      @id @default(autoincrement())
-  name        String
-  category    String
-  subcategory String
-  price       Float
-  stock       Int
-  code        String   @unique
-  image       String?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  name          String
+  category      String
+  subcategory   String
+  price         Float
+  stock         Int
+  code          String   @unique
+  image         String?
+  description   String?
+  specifications String? // JSON string containing custom specifications
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model ContactInquiry {

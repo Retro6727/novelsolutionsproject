@@ -730,7 +730,8 @@ function ProductsTab() {
     stock: '',
     image: '',
     description: '',
-    code: ''
+    code: '',
+    specifications: ''
   });
   const [editingId, setEditingId] = useState(null);
   // Import file states
@@ -770,7 +771,7 @@ function ProductsTab() {
       console.error(err)
     }
 
-    const reset = { name: '', category: '', subcategory: '', price: '', stock: '', image: '', description: '', code: '' };
+    const reset = { name: '', category: '', subcategory: '', price: '', stock: '', image: '', description: '', code: '', specifications: '' };
     setFormData(reset);
     if (addAndMore) {
       setShowAddForm(true);
@@ -1066,6 +1067,7 @@ function ProductsTab() {
             code: item.code || item.sku || String(Date.now() + Math.random()).slice(0,10),
             image: item.image || null,
             description: item.description || null,
+            specifications: item.specifications || null,
           }),
         })
         if (res.ok) {
@@ -1134,7 +1136,7 @@ function ProductsTab() {
               setShowAddForm(!showAddForm);
               if (editingId) {
                 setEditingId(null);
-                setFormData({ name: '', category: '', subcategory: '', price: '', stock: '', code: '', image: '', description: '' });
+                setFormData({ name: '', category: '', subcategory: '', price: '', stock: '', code: '', image: '', description: '', specifications: '' });
               }
             }}
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -1541,6 +1543,23 @@ function ProductsTab() {
               />
             </div>
             
+            <div className="md:col-span-2">
+              <label className="block text-sm font-semibold mb-2">
+                Specifications 
+                <span className="text-xs text-gray-500 font-normal ml-2">(One specification per line)</span>
+              </label>
+              <textarea
+                value={formData.specifications}
+                onChange={(e) => setFormData({ ...formData, specifications: e.target.value })}
+                placeholder="Enter product specifications, one per line:&#10;• Material: Stainless Steel&#10;• Dimensions: 120x60x75 cm&#10;• Weight: 25 kg&#10;• Warranty: 2 Years&#10;• Color: Black/Silver"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                rows={6}
+              />
+              <div className="mt-2 text-xs text-gray-500">
+                💡 <strong>Tips:</strong> Use bullet points (•) or dashes (-) for better formatting. Each line will be displayed as a separate specification.
+              </div>
+            </div>
+            
             <div className="md:col-span-2 flex gap-4 items-center">
               <button
                 type="submit"
@@ -1602,6 +1621,7 @@ function ProductsTab() {
                       <th className="p-2">Category</th>
                       <th className="p-2">Code</th>
                       <th className="p-2">Description</th>
+                      <th className="p-2">Specifications</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1631,7 +1651,8 @@ function ProductsTab() {
                         <td className="p-2"><input className="w-full" value={it.price} onChange={(e) => updatePreviewItem(idx, 'price', e.target.value)} /></td>
                         <td className="p-2"><input className="w-full" value={it.category} onChange={(e) => updatePreviewItem(idx, 'category', e.target.value)} /></td>
                         <td className="p-2"><input className="w-full" value={it.code || ''} onChange={(e) => updatePreviewItem(idx, 'code', e.target.value)} /></td>
-                        <td className="p-2"><input className="w-full" value={it.description} onChange={(e) => updatePreviewItem(idx, 'description', e.target.value)} /></td>
+                        <td className="p-2"><input className="w-full" value={it.description || ''} onChange={(e) => updatePreviewItem(idx, 'description', e.target.value)} /></td>
+                        <td className="p-2"><textarea className="w-full text-xs" rows={2} value={it.specifications || ''} onChange={(e) => updatePreviewItem(idx, 'specifications', e.target.value)} placeholder="One spec per line" /></td>
                       </tr>
                     ))}
                   </tbody>
