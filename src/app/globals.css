@@ -192,3 +192,45 @@ body {
 .auto-rows-fr {
   grid-auto-rows: 1fr;
 }
+
+/* Mobile-specific utilities */
+@media (max-width: 640px) {
+  .text-responsive {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+  }
+  
+  .heading-responsive {
+    font-size: clamp(1.5rem, 8vw, 3rem);
+  }
+  
+  .glass {
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* Tablet-specific utilities */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-padding {
+    padding: 1.5rem;
+  }
+  
+  .tablet-text {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+  }
+}
+
+/* Touch-friendly interactive elements */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:scale-105:hover {
+    transform: scale(1.02);
+  }
+  
+  .hover\:-translate-y-2:hover {
+    transform: translateY(-0.25rem);
+  }
+  
+  button, .cursor-pointer {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

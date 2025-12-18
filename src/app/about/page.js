@@ -9,22 +9,22 @@ export default function About() {
       <Header />
       
       <main className="flex-grow relative overflow-hidden">
-        {/* Enhanced Hero */}
-        <section className="relative gradient-hero text-white py-32 px-6 overflow-hidden">
-          {/* Background elements */}
+        {/* Enhanced Hero - Mobile Responsive */}
+        <section className="relative gradient-hero text-white py-16 sm:py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
+          {/* Background elements - Responsive */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-float" />
-            <div className="absolute bottom-20 left-20 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl" />
+            <div className="absolute top-10 sm:top-20 right-10 sm:right-20 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-white/5 rounded-full blur-3xl animate-float" />
+            <div className="absolute bottom-10 sm:bottom-20 left-10 sm:left-20 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 bg-purple-400/10 rounded-full blur-3xl" />
           </div>
           
           <div className="relative max-w-7xl mx-auto text-center">
-            <div className="inline-block mb-8">
-              <span className="glass px-6 py-3 rounded-full text-sm font-heading font-semibold border border-white/20">
+            <div className="inline-block mb-6 sm:mb-8">
+              <span className="glass px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-semibold border border-white/20">
                 🏭 Established Excellence Since 2014
               </span>
             </div>
             
-            <h1 className="font-display text-6xl lg:text-7xl font-black mb-8 leading-tight">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-6 sm:mb-8 leading-tight">
               <span className="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent animate-gradient">
                 About Novel
               </span>
@@ -33,7 +33,7 @@ export default function About() {
               </span>
             </h1>
             
-            <p className="font-body text-2xl lg:text-3xl text-blue-100 max-w-4xl mx-auto leading-relaxed">
+            <p className="font-body text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 max-w-4xl mx-auto leading-relaxed px-4">
               Your trusted manufacturing partner for 
               <span className="font-semibold text-white"> B2B excellence</span> and 
               <span className="font-semibold text-white"> premium quality</span>
@@ -41,34 +41,34 @@ export default function About() {
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          {/* Enhanced Company Overview */}
-          <section className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="font-display text-5xl lg:text-6xl font-black gradient-text mb-6">Our Story</h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+          {/* Enhanced Company Overview - Mobile Responsive */}
+          <section className="mb-12 sm:mb-16 md:mb-20">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black gradient-text mb-4 sm:mb-6">Our Story</h2>
+              <div className="w-16 sm:w-24 h-0.5 sm:h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto"></div>
             </div>
             
-            <div className="glass p-12 rounded-3xl border border-white/20 shadow-professional-lg">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="space-y-6">
-                  <p className="font-body text-neutral-700 text-lg leading-relaxed">
+            <div className="glass p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl border border-white/20 shadow-professional-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+                <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
+                  <p className="font-body text-neutral-700 text-sm sm:text-base md:text-lg leading-relaxed">
                     <span className="font-heading font-bold text-blue-600">NOVEL SOLUTIONS</span> is a trusted GeM-supported B2B manufacturer, supplier & distributor offering high-quality products at competitive prices. We serve businesses, institutions, and government buyers with quality products, best pricing, and timely delivery.
                   </p>
-                  <p className="font-body text-neutral-700 text-lg leading-relaxed">
+                  <p className="font-body text-neutral-700 text-sm sm:text-base md:text-lg leading-relaxed">
                     As a GeM-registered business, we're committed to supporting government and institutional procurement while maintaining the same premium standards for all our customers.
                   </p>
-                  <p className="font-body text-neutral-700 text-lg leading-relaxed">
+                  <p className="font-body text-neutral-700 text-sm sm:text-base md:text-lg leading-relaxed">
                     Our extensive experience in manufacturing and procurement has enabled us to build a network of trusted suppliers and deliver exceptional value to our B2B customers.
                   </p>
                 </div>
                 
-                <div className="relative">
-                  <div className="glass p-8 rounded-2xl border border-white/20">
+                <div className="relative order-1 lg:order-2">
+                  <div className="glass p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-white/20">
                     <div className="text-center">
-                      <div className="text-6xl mb-4">🏭</div>
-                      <h3 className="font-heading text-2xl font-bold gradient-text mb-4">Manufacturing Excellence</h3>
-                      <p className="font-body text-neutral-600">Delivering quality products with precision and reliability since our establishment.</p>
+                      <div className="text-4xl sm:text-5xl md:text-6xl mb-3 sm:mb-4">🏭</div>
+                      <h3 className="font-heading text-lg sm:text-xl md:text-2xl font-bold gradient-text mb-3 sm:mb-4">Manufacturing Excellence</h3>
+                      <p className="font-body text-neutral-600 text-sm sm:text-base">Delivering quality products with precision and reliability since our establishment.</p>
                     </div>
                   </div>
                 </div>
@@ -76,25 +76,25 @@ export default function About() {
             </div>
           </section>
 
-          {/* Enhanced Mission & Vision */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-20">
+          {/* Enhanced Mission & Vision - Mobile Responsive */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16 md:mb-20">
             <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl transform rotate-1 group-hover:rotate-2 transition-transform duration-300"></div>
-              <div className="relative glass p-10 rounded-3xl border border-white/20 shadow-professional-lg hover:shadow-professional-xl transition-all duration-300">
-                <div className="text-5xl mb-6">🎯</div>
-                <h3 className="font-heading text-3xl font-bold mb-6 gradient-text">Our Mission</h3>
-                <p className="font-body text-neutral-700 text-lg leading-relaxed">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl sm:rounded-3xl transform rotate-1 group-hover:rotate-2 transition-transform duration-300"></div>
+              <div className="relative glass p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl border border-white/20 shadow-professional-lg hover:shadow-professional-xl transition-all duration-300">
+                <div className="text-3xl sm:text-4xl md:text-5xl mb-4 sm:mb-6">🎯</div>
+                <h3 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 gradient-text">Our Mission</h3>
+                <p className="font-body text-neutral-700 text-sm sm:text-base md:text-lg leading-relaxed">
                   To be the most trusted source for high-quality manufacturing products, delivering consistent value through transparency, reliability, and exceptional customer service.
                 </p>
               </div>
             </div>
             
             <div className="group relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl transform -rotate-1 group-hover:-rotate-2 transition-transform duration-300"></div>
-              <div className="relative glass p-10 rounded-3xl border border-white/20 shadow-professional-lg hover:shadow-professional-xl transition-all duration-300">
-                <div className="text-5xl mb-6">🚀</div>
-                <h3 className="font-heading text-3xl font-bold mb-6 gradient-text">Our Vision</h3>
-                <p className="font-body text-neutral-700 text-lg leading-relaxed">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl sm:rounded-3xl transform -rotate-1 group-hover:-rotate-2 transition-transform duration-300"></div>
+              <div className="relative glass p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl border border-white/20 shadow-professional-lg hover:shadow-professional-xl transition-all duration-300">
+                <div className="text-3xl sm:text-4xl md:text-5xl mb-4 sm:mb-6">🚀</div>
+                <h3 className="font-heading text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 gradient-text">Our Vision</h3>
+                <p className="font-body text-neutral-700 text-sm sm:text-base md:text-lg leading-relaxed">
                   To empower businesses across India with access to premium manufacturing products at fair prices, enabling economic growth and industrial excellence.
                 </p>
               </div>

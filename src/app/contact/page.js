@@ -65,60 +65,60 @@ export default function Contact() {
       <Header />
       
       <main className="flex-grow relative overflow-hidden">
-        {/* Enhanced Hero */}
-        <section className="relative gradient-hero text-white py-32 px-6 overflow-hidden">
-          {/* Background elements */}
+        {/* Enhanced Hero - Mobile Responsive */}
+        <section className="relative gradient-hero text-white py-16 sm:py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
+          {/* Background elements - Responsive */}
           <div className="absolute inset-0">
-            <div className="absolute top-20 right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-float" />
-            <div className="absolute bottom-20 left-20 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl" />
+            <div className="absolute top-10 sm:top-20 right-10 sm:right-20 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-white/5 rounded-full blur-3xl animate-float" />
+            <div className="absolute bottom-10 sm:bottom-20 left-10 sm:left-20 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 bg-purple-400/10 rounded-full blur-3xl" />
           </div>
           
           <div className="relative max-w-7xl mx-auto text-center">
-            <div className="inline-block mb-8">
-              <span className="glass px-6 py-3 rounded-full text-sm font-heading font-semibold border border-white/20">
+            <div className="inline-block mb-6 sm:mb-8">
+              <span className="glass px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-semibold border border-white/20">
                 💬 Let's Connect
               </span>
             </div>
             
-            <h1 className="font-display text-6xl lg:text-7xl font-black mb-8 leading-tight">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-6 sm:mb-8 leading-tight">
               <span className="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent animate-gradient">
                 Get in Touch
               </span>
             </h1>
             
-            <p className="font-body text-2xl lg:text-3xl text-blue-100 max-w-4xl mx-auto leading-relaxed mb-8">
+            <p className="font-body text-lg sm:text-xl md:text-2xl lg:text-3xl text-blue-100 max-w-4xl mx-auto leading-relaxed mb-6 sm:mb-8 px-4">
               Ready to discuss your 
               <span className="font-semibold text-white"> manufacturing needs</span>? 
               We're here to help you succeed.
             </p>
             
-            {/* Quick contact options */}
-            <div className="flex flex-wrap justify-center gap-6 text-blue-200">
-              <div className="flex items-center gap-2">
+            {/* Quick contact options - Mobile Responsive */}
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-6 text-blue-200">
+              <div className="flex items-center justify-center gap-2">
                 <span className="text-green-400">📞</span>
-                <span className="font-body text-sm">Call: +91-9867473095</span>
+                <span className="font-body text-xs sm:text-sm">Call: +91-9867473095</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2">
                 <span className="text-green-400">✉️</span>
-                <span className="font-body text-sm">Email: novelsolution.trade@gmail.com</span>
+                <span className="font-body text-xs sm:text-sm">Email: novelsolution.trade@gmail.com</span>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-6 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Enhanced Contact Info */}
-            <div className="glass p-8 rounded-3xl border border-white/20 shadow-professional-lg h-fit">
-              <h2 className="font-heading text-3xl font-bold gradient-text mb-8">Contact Information</h2>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12">
+            {/* Enhanced Contact Info - Mobile Responsive */}
+            <div className="glass p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-white/20 shadow-professional-lg h-fit order-2 lg:order-1">
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold gradient-text mb-6 sm:mb-8">Contact Information</h2>
               
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 <div className="group">
-                  <h4 className="font-heading font-bold mb-4 flex items-center gap-3 text-lg">
-                    <span className="text-3xl group-hover:scale-110 transition-transform">📍</span> 
+                  <h4 className="font-heading font-bold mb-3 sm:mb-4 flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
+                    <span className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform">📍</span> 
                     <span className="gradient-text">Address</span>
                   </h4>
-                  <div className="ml-12 font-body text-neutral-700 leading-relaxed">
+                  <div className="ml-8 sm:ml-12 font-body text-neutral-700 leading-relaxed text-sm sm:text-base">
                     <strong>Novel Solutions</strong><br />
                     Kalyan West, India<br />
                     PIN: 421301
@@ -185,10 +185,10 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Enhanced Contact Form */}
-            <div className="lg:col-span-2">
-              <div className="glass p-10 rounded-3xl border border-white/20 shadow-professional-lg">
-                <h2 className="font-heading text-3xl font-bold gradient-text mb-8">Send us a Message</h2>
+            {/* Enhanced Contact Form - Mobile Responsive */}
+            <div className="lg:col-span-2 order-1 lg:order-2">
+              <div className="glass p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl border border-white/20 shadow-professional-lg">
+                <h2 className="font-heading text-2xl sm:text-3xl font-bold gradient-text mb-6 sm:mb-8">Send us a Message</h2>
                 <form onSubmit={handleSubmit} className="space-y-8">
                 {successMessage && (
                   <div className="p-4 bg-green-50 border border-green-200 text-green-800 rounded mb-2">{successMessage}</div>

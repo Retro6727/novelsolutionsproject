@@ -257,10 +257,10 @@ export default function ProductsPage() {
       <Header />
 
       <main className="flex-grow relative overflow-hidden">
-        {/* Enhanced Breadcrumb */}
-        <div className="glass border-b border-white/20 px-6 py-4">
+        {/* Enhanced Breadcrumb - Mobile Responsive */}
+        <div className="glass border-b border-white/20 px-4 sm:px-6 py-3 sm:py-4">
           <div className="max-w-7xl mx-auto">
-            <nav className="flex items-center space-x-2 text-sm">
+            <nav className="flex items-center space-x-2 text-xs sm:text-sm">
               <Link href="/" className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
                 Home
               </Link>
@@ -270,60 +270,60 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        {/* Enhanced Page Header */}
-        <section className="relative px-6 py-20 gradient-hero text-white overflow-hidden">
-          {/* Background elements */}
+        {/* Enhanced Page Header - Mobile Responsive */}
+        <section className="relative px-4 sm:px-6 py-12 sm:py-16 md:py-20 gradient-hero text-white overflow-hidden">
+          {/* Background elements - Responsive */}
           <div className="absolute inset-0">
-            <div className="absolute top-10 right-10 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-float" />
-            <div className="absolute bottom-10 left-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl" />
+            <div className="absolute top-5 sm:top-10 right-5 sm:right-10 w-32 sm:w-48 md:w-64 h-32 sm:h-48 md:h-64 bg-white/5 rounded-full blur-3xl animate-float" />
+            <div className="absolute bottom-5 sm:bottom-10 left-5 sm:left-10 w-48 sm:w-72 md:w-96 h-48 sm:h-72 md:h-96 bg-purple-400/10 rounded-full blur-3xl" />
           </div>
           
           <div className="relative max-w-7xl mx-auto text-center">
-            <div className="inline-block mb-6">
-              <span className="glass px-6 py-3 rounded-full text-sm font-heading font-semibold border border-white/20">
+            <div className="inline-block mb-4 sm:mb-6">
+              <span className="glass px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-heading font-semibold border border-white/20">
                 🏭 Premium Manufacturing Catalog
               </span>
             </div>
             
-            <h1 className="font-display text-6xl lg:text-7xl font-black mb-6 leading-tight">
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black mb-4 sm:mb-6 leading-tight">
               <span className="block bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent animate-gradient">
                 Our Products
               </span>
             </h1>
             
-            <p className="font-body text-xl lg:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-8">
+            <p className="font-body text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 px-4">
               Discover our comprehensive catalog of 
               <span className="font-semibold text-white"> premium manufacturing products</span> designed for professional excellence
             </p>
             
-            {/* Stats */}
-            <div className="flex flex-wrap justify-center gap-8 text-blue-200">
+            {/* Stats - Mobile Responsive */}
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 text-blue-200">
               <div className="flex items-center gap-2">
                 <span className="text-green-400">✓</span>
-                <span className="font-body text-sm">Quality Assured</span>
+                <span className="font-body text-xs sm:text-sm">Quality Assured</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-green-400">✓</span>
-                <span className="font-body text-sm">Bulk Orders</span>
+                <span className="font-body text-xs sm:text-sm">Bulk Orders</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-green-400">✓</span>
-                <span className="font-body text-sm">Fast Delivery</span>
+                <span className="font-body text-xs sm:text-sm">Fast Delivery</span>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
 
-            {/* Enhanced Sidebar */}
-            <div className={`lg:col-span-1 glass p-8 rounded-2xl shadow-professional-lg border border-white/20 ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
+            {/* Enhanced Sidebar - Mobile Responsive */}
+            <div className={`lg:col-span-1 glass p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-professional-lg border border-white/20 ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="lg:hidden mb-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                className="lg:hidden mb-4 w-full gradient-primary text-white py-3 rounded-xl font-heading font-semibold hover:shadow-professional transition-all duration-300"
               >
-                {isSidebarOpen ? 'Hide Filters' : 'Show Filters'}
+                {isSidebarOpen ? '✕ Hide Filters' : '⚙️ Show Filters'}
               </button>
 
               {/* Categories */}

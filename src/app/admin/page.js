@@ -1091,10 +1091,6 @@ function ProductsTab() {
       return;
     }
 
-    // Simple test - just show an alert to confirm the function is called
-    alert(`Import function called with ${toImport.length} items. Check console for details.`);
-    console.log('🔍 First item to import:', toImport[0]);
-
     setImportStatus({ loading: true, message: `Importing ${toImport.length} items...`, type: 'info' });
     
     try {
@@ -1110,125 +1106,15 @@ function ProductsTab() {
         });
 
         try {
-          // Validate required fields
-          if (!item.name || !item.category) {
-            failed.push({ item: item.name || 'Unnamed item', error: 'Missing name or category' });
+          // Validate required fields - make category optional since we can auto-assign
+          if (!item.name) {
+            failed.push({ item: item.name || 'Unnamed item', error: 'Missing product name' });
             continue;
           }
 
           const productData = {
             name: item.name.trim(),
-            category: item.category.trim(),
-            subcategory: (item.subcategory || item.category || 'General').trim(),
-            price: Number(item.price) || 0,
-            stock: Number(item.stock) || 0,
-            code: item.code || item.sku || `AUTO-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-            image: item.image || null,
-            description: (item.description || '').trim() || null,
-            specifications: (item.specifications || '').trim() || null,
-          };
-          
-          console.log('📤 Sending product data:', productData);
-          
-          const res = await fetch('/api/product', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(productData),
-          });
-
-          console.log('📥 API Response status:', res.status, res.statusText);
-          
-          if (res.ok) {
-            const newProduct = await res.json();
-            created.push(newProduct);
-            console.log('✅ Successfully imported:', item.name, newProduct);
-          } else {
-            const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
-            console.error('❌ Failed to import:', item.name, 'Status:', res.status, 'Error:', errorData);
-            failed.push({ item: item.name, error: errorData.error || `HTTP ${res.status}` });
-          }
-        } catch (itemError) {
-          failed.push({ item: item.name, error: itemError.message });
-          console.error('❌ Import error for item:', item.name, itemError);
-        }
-
-        // Small delay to prevent overwhelming the server
-        if (i < toImport.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-      }
-
-      // Update products list with successfully created items
-      if (created.length > 0) {
-        const updatedProducts = [...products, ...created];
-        setProducts(updatedProducts);
-      }
-
-      // Show final status
-      let finalMessage = '';
-      let finalType = 'success';
-
-      if (created.length > 0 && failed.length === 0) {
-        finalMessage = `✅ Successfully imported all ${created.length} items!`;
-        finalType = 'success';
-      } else if (created.length > 0 && failed.length > 0) {
-        finalMessage = `⚠️ Imported ${created.length} items successfully, ${failed.length} failed.`;
-        finalType = 'warning';
-      } else if (failed.length > 0) {
-        finalMessage = `❌ Failed to import all ${failed.length} items.`;
-        finalType = 'error';
-      }
-
-      // Show detailed errors if any
-      if (failed.length > 0) {
-        console.error('Import failures:', failed);
-        finalMessage += ` Errors: ${failed.map(f => `${f.item}: ${f.error}`).join('; ')}`;
-      }
-
-      setImportStatus({ loading: false, message: finalMessage, type: finalType });
-
-      // Auto-hide success message after 3 seconds
-      if (finalType === 'success') {
-        setTimeout(() => {
-          setImportStatus({ loading: false, message: '', type: '' });
-          setImportPreview([]);
-          setImportOpen(false);
-        }, 3000);
-      }
-
-    } catch (e) {
-      console.error('❌ Import process failed:', e);
-      setImportStatus({ 
-        loading: false, 
-        message: `❌ Import failed: ${e.message}`, 
-        type: 'error' 
-      });
-    }
-
-    setImportStatus({ loading: true, message: `Importing ${toImport.length} items...`, type: 'info' });
-    
-    try {
-      const created = [];
-      const failed = [];
-      
-      for (let i = 0; i < toImport.length; i++) {
-        const item = toImport[i];
-        setImportStatus({ 
-          loading: true, 
-          message: `Importing item ${i + 1} of ${toImport.length}: ${item.name}...`, 
-          type: 'info' 
-        });
-
-        try {
-          // Validate required fields
-          if (!item.name || !item.category) {
-            failed.push({ item: item.name || 'Unnamed item', error: 'Missing name or category' });
-            continue;
-          }
-
-          const productData = {
-            name: item.name.trim(),
-            category: item.category.trim(),
+            category: (item.category || 'General').trim(),
             subcategory: (item.subcategory || item.category || 'General').trim(),
             price: Number(item.price) || 0,
             stock: Number(item.stock) || 0,
