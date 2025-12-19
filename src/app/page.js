@@ -130,29 +130,40 @@ export default function Home() {
                     </motion.div>
                     
                     {/* Orbiting elements - Responsive */}
-                    {['⚙️', '📊', '🚀', '💼', '🔧', '📈'].map((icon, idx) => (
-                      <motion.div
-                        key={idx}
-                        className="absolute text-lg sm:text-2xl md:text-3xl"
-                        style={{
-                          top: '50%',
-                          left: '50%',
-                          transformOrigin: '0 0'
-                        }}
-                        animate={{
-                          rotate: [0, 360],
-                          x: Math.cos((idx * 60) * Math.PI / 180) * (window.innerWidth < 640 ? 60 : window.innerWidth < 768 ? 90 : 120),
-                          y: Math.sin((idx * 60) * Math.PI / 180) * (window.innerWidth < 640 ? 60 : window.innerWidth < 768 ? 90 : 120),
-                        }}
-                        transition={{
-                          duration: 20 + idx * 2,
-                          repeat: Infinity,
-                          ease: "linear"
-                        }}
-                      >
-                        {icon}
-                      </motion.div>
-                    ))}
+                    {['⚙️', '📊', '🚀', '💼', '🔧', '📈'].map((icon, idx) => {
+                      // Calculate radius based on screen size (default to desktop for SSR)
+                      const getRadius = () => {
+                        if (typeof window === 'undefined') return 120; // SSR default
+                        if (window.innerWidth < 640) return 60;
+                        if (window.innerWidth < 768) return 90;
+                        return 120;
+                      };
+                      const radius = getRadius();
+                      
+                      return (
+                        <motion.div
+                          key={idx}
+                          className="absolute text-lg sm:text-2xl md:text-3xl"
+                          style={{
+                            top: '50%',
+                            left: '50%',
+                            transformOrigin: '0 0'
+                          }}
+                          animate={{
+                            rotate: [0, 360],
+                            x: Math.cos((idx * 60) * Math.PI / 180) * radius,
+                            y: Math.sin((idx * 60) * Math.PI / 180) * radius,
+                          }}
+                          transition={{
+                            duration: 20 + idx * 2,
+                            repeat: Infinity,
+                            ease: "linear"
+                          }}
+                        >
+                          {icon}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                   
                   {/* Shimmer effect */}
@@ -535,12 +546,15 @@ function ProductSlider() {
       if (window.innerWidth < 1024) return 2; // Tablet: 2 products
       return 4; // Desktop: 4 products
     }
-    return 4;
+    return 4; // SSR default
   };
 
   const [visibleCount, setVisibleCount] = useState(4);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // Mark as client-side and set initial responsive value
+    setIsClient(true);
     const handleResize = () => {
       setVisibleCount(getVisibleCount());
     };
