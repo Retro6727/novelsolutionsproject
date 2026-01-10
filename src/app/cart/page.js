@@ -10,6 +10,16 @@ export default function CartPage() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
   const [lastProductId, setLastProductId] = useState(null);
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [contactData, setContactData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    address: '',
+    message: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
 
   // Load cart initially + listen to cart changes
   useEffect(() => {
@@ -34,6 +44,75 @@ export default function CartPage() {
     setLoading(true);
     await updateQuantity(id, newQuantity);
     setLoading(false);
+  };
+
+  const handleOrderSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      // Prepare order data
+      const orderData = {
+        ...contactData,
+        items: cart,
+        total: total,
+        orderDate: new Date().toISOString(),
+        orderNumber: `ORD-${Date.now()}`
+      };
+
+      // Submit to contact API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: contactData.name,
+          email: contactData.email,
+          phone: contactData.phone,
+          company: contactData.company,
+          subject: `Order Request - ${orderData.orderNumber}`,
+          message: `Order Details:
+          
+Order Number: ${orderData.orderNumber}
+Customer: ${contactData.name}
+Email: ${contactData.email}
+Phone: ${contactData.phone}
+Company: ${contactData.company || 'N/A'}
+Address: ${contactData.address || 'N/A'}
+
+Items Ordered:
+${cart.map(item => `- ${item.name} (Qty: ${item.quantity}) - ₹${(item.price * item.quantity).toLocaleString()}`).join('\n')}
+
+Total Amount: ₹${total.toLocaleString()}
+
+Additional Message: ${contactData.message || 'None'}
+
+Please process this order and contact the customer for payment and delivery arrangements.`
+        })
+      });
+
+      if (response.ok) {
+        alert('Order submitted successfully! We will contact you shortly to confirm your order and arrange payment.');
+        
+        // Clear cart and form
+        cart.forEach(item => removeFromCart(item.id));
+        setContactData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          address: '',
+          message: ''
+        });
+        setShowContactForm(false);
+      } else {
+        throw new Error('Failed to submit order');
+      }
+    } catch (error) {
+      console.error('Order submission error:', error);
+      alert('Failed to submit order. Please try again or contact us directly.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (cart.length === 0) {
@@ -177,12 +256,12 @@ export default function CartPage() {
               </div>
 
               <div className="space-y-3">
-                <Link 
-                  href="/checkout"
+                <button 
+                  onClick={() => setShowContactForm(true)}
                   className="block w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-5 px-6 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 transform hover:-translate-y-1 text-center"
                 >
-                  Proceed to Checkout →
-                </Link>
+                  📧 Place Order Through Email
+                </button>
                 
                 <Link 
                   href={lastProductId ? `/products/${lastProductId}` : "/products"}
@@ -195,6 +274,149 @@ export default function CartPage() {
           </div>
         </div>
         </div>
+
+        {/* Contact Form Modal */}
+        {showContactForm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-3xl font-bold text-gray-900">Place Your Order</h2>
+                  <button
+                    onClick={() => setShowContactForm(false)}
+                    className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-200">
+                  <h3 className="font-semibold text-blue-900 mb-2">📋 Order Summary</h3>
+                  <div className="text-sm text-blue-800">
+                    <p>{cart.length} items • Total: ₹{total.toLocaleString()}</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleOrderSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={contactData.name}
+                        onChange={(e) => setContactData({...contactData, name: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Enter your full name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={contactData.email}
+                        onChange={(e) => setContactData({...contactData, email: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Enter your email"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Phone Number *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={contactData.phone}
+                        onChange={(e) => setContactData({...contactData, phone: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Enter your phone number"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Company/Organization
+                      </label>
+                      <input
+                        type="text"
+                        value={contactData.company}
+                        onChange={(e) => setContactData({...contactData, company: e.target.value})}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                        placeholder="Enter company name (optional)"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Delivery Address
+                    </label>
+                    <textarea
+                      value={contactData.address}
+                      onChange={(e) => setContactData({...contactData, address: e.target.value})}
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Enter your delivery address"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Additional Message
+                    </label>
+                    <textarea
+                      value={contactData.message}
+                      onChange={(e) => setContactData({...contactData, message: e.target.value})}
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Any special requirements or notes..."
+                    />
+                  </div>
+
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="text-yellow-600 text-xl">💡</span>
+                      <div className="text-sm text-yellow-800">
+                        <p className="font-semibold mb-1">How it works:</p>
+                        <ul className="space-y-1 text-xs">
+                          <li>• We'll receive your order details via email</li>
+                          <li>• Our team will contact you within 24 hours</li>
+                          <li>• We'll confirm availability and arrange payment</li>
+                          <li>• Delivery will be scheduled as per your convenience</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowContactForm(false)}
+                      className="flex-1 px-6 py-4 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="flex-1 px-6 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {submitting ? '📧 Sending...' : '📧 Submit Order'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
       </main>      
       <Footer />
     </div>
