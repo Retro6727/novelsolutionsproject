@@ -222,7 +222,9 @@ export const CATEGORIES = [
       'Relay',
       'Insulating mat',
       'MCCB',
-      'Vacuum contractor'
+      'Vacuum contractor',
+      'MCX',
+      'MNX'
     ]
   },
   {
@@ -259,7 +261,7 @@ export const CATEGORIES = [
     ]
   },
   {
-    name: 'IT',
+    name: 'Computer Hardwares and Tools',
     subs: [
       'Keyboard',
       'Pen Drives',
