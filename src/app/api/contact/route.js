@@ -168,48 +168,69 @@ export async function POST(req) {
 // SendGrid email method
 async function sendWithSendGrid(inquiry, apiKey) {
   const SENDGRID_FROM = process.env.SENDGRID_FROM || 'no-reply@novelsolutions.com';
-  const TO_EMAIL = process.env.CONTACT_RECEIVER || 'novelsolution.trade@gmail.com';
+  const TO_EMAIL = process.env.CONTACT_RECEIVER || 'novelsolutiontrade@gmail.com';
 
-  const subjectLine = `🔔 Website Contact: ${inquiry.subject} — ${inquiry.name}`;
+  // Check if this is an order request
+  const isOrderRequest = inquiry.subject && inquiry.subject.includes('Order Request');
+  const subjectLine = isOrderRequest 
+    ? `🛒 NEW ORDER REQUEST: ${inquiry.subject} — ${inquiry.name}`
+    : `🔔 Website Contact: ${inquiry.subject} — ${inquiry.name}`;
   
   const htmlContent = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-      <h2 style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-        📧 New Contact Form Submission
+    <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+      <h2 style="color: ${isOrderRequest ? '#059669' : '#2563eb'}; border-bottom: 2px solid ${isOrderRequest ? '#059669' : '#2563eb'}; padding-bottom: 10px;">
+        ${isOrderRequest ? '🛒 New Order Request' : '📧 New Contact Form Submission'}
       </h2>
       
+      ${isOrderRequest ? `
+      <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+        <h3 style="color: #065f46; margin-top: 0;">🎯 PRIORITY: Order Request</h3>
+        <p style="color: #047857; font-weight: bold;">This is a customer order request. Please process immediately!</p>
+      </div>
+      ` : ''}
+      
       <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #1e40af; margin-top: 0;">Customer Information</h3>
-        <p><strong>👤 Name:</strong> ${escapeHtml(inquiry.name)}</p>
-        <p><strong>📧 Email:</strong> <a href="mailto:${inquiry.email}">${escapeHtml(inquiry.email)}</a></p>
-        <p><strong>📱 Phone:</strong> ${inquiry.phone ? `<a href="tel:${inquiry.phone}">${escapeHtml(inquiry.phone)}</a>` : 'Not provided'}</p>
+        <h3 style="color: #1e40af; margin-top: 0;">👤 Customer Information</h3>
+        <p><strong>📛 Name:</strong> ${escapeHtml(inquiry.name)}</p>
+        <p><strong>📧 Email:</strong> <a href="mailto:${inquiry.email}" style="color: #2563eb;">${escapeHtml(inquiry.email)}</a></p>
+        <p><strong>📱 Phone:</strong> ${inquiry.phone ? `<a href="tel:${inquiry.phone}" style="color: #059669;">${escapeHtml(inquiry.phone)}</a>` : 'Not provided'}</p>
         <p><strong>🏢 Company:</strong> ${escapeHtml(inquiry.company || 'Not provided')}</p>
         <p><strong>📋 Subject:</strong> ${escapeHtml(inquiry.subject)}</p>
       </div>
       
-      <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0;">
-        <h3 style="color: #92400e; margin-top: 0;">💬 Message</h3>
-        <p style="white-space: pre-wrap; line-height: 1.6;">${escapeHtml(inquiry.message)}</p>
+      <div style="background: ${isOrderRequest ? '#fef3c7' : '#fef3c7'}; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="color: #92400e; margin-top: 0;">${isOrderRequest ? '📦 Order Details' : '💬 Message'}</h3>
+        <div style="white-space: pre-wrap; line-height: 1.6; font-family: 'Courier New', monospace; background: white; padding: 15px; border-radius: 5px; border: 1px solid #e5e7eb;">${escapeHtml(inquiry.message)}</div>
       </div>
       
       <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; margin: 20px 0;">
         <h3 style="color: #065f46; margin-top: 0;">🚀 Quick Actions</h3>
-        <p>
+        <p style="margin-bottom: 15px;">
           <a href="mailto:${inquiry.email}?subject=Re: ${encodeURIComponent(inquiry.subject)}" 
-             style="background: #2563eb; color: white; padding: 8px 16px; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+             style="background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-right: 10px; display: inline-block; margin-bottom: 5px;">
             📧 Reply via Email
           </a>
           ${inquiry.phone ? `<a href="tel:${inquiry.phone}" 
-             style="background: #059669; color: white; padding: 8px 16px; text-decoration: none; border-radius: 5px;">
+             style="background: #059669; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 5px;">
             📞 Call Customer
           </a>` : ''}
         </p>
+        ${isOrderRequest ? `
+        <p style="background: #fef3c7; padding: 10px; border-radius: 5px; border-left: 4px solid #f59e0b; margin-top: 10px;">
+          <strong>⏰ Next Steps:</strong><br>
+          1. Review order details above<br>
+          2. Check product availability<br>
+          3. Contact customer within 24 hours<br>
+          4. Provide quote and delivery timeline
+        </p>
+        ` : ''}
       </div>
       
       <hr style="margin: 20px 0; border: none; border-top: 1px solid #e5e7eb;">
       <p style="color: #6b7280; font-size: 12px;">
-        <strong>📅 Received:</strong> ${new Date(inquiry.timestamp).toLocaleString()}<br>
-        <strong>🌐 Source:</strong> Novel Solutions Website Contact Form
+        <strong>📅 Received:</strong> ${new Date(inquiry.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}<br>
+        <strong>🌐 Source:</strong> Novel Solutions Website ${isOrderRequest ? 'Cart Order System' : 'Contact Form'}<br>
+        <strong>🔗 Admin Panel:</strong> <a href="https://your-domain.com/admin" style="color: #2563eb;">View in Admin Dashboard</a>
       </p>
     </div>
   `;
