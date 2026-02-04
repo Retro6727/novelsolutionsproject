@@ -1,34 +1,54 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Image optimization configuration
+  // Optimize for smaller builds
+  experimental: {
+    optimizeCss: true,
+  },
+  
+  // Compress images
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'uwuuyelynldcpumhcqhn.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
-    ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
   },
   
-  // Turbopack configuration - clean setup for Next.js 16
-  turbopack: {},
-  
-  // Performance optimizations
-  poweredByHeader: false,
+  // Enable compression
   compress: true,
   
-  // Next.js 16 experimental features
-  experimental: {
-    // Only include stable experimental features
-    optimizePackageImports: ['@prisma/client'],
+  // Optimize bundle
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    
+    // Optimize bundle size
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all',
+          },
+        },
+      },
+    };
+    
+    return config;
   },
   
-  // React compiler (moved from experimental in Next.js 16)
-  reactCompiler: false,
+  // Reduce output size
+  output: 'standalone',
+  
+  // Optimize static generation
+  trailingSlash: false,
+  
+  // Remove unused code
+  swcMinify: true,
 };
 
 export default nextConfig;

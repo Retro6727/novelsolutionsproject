@@ -816,39 +816,18 @@ function ProductsTab() {
     
     try {
       const name = file.name.toLowerCase();
-      if (name.endsWith('.pdf')) {
-        try {
-          const pdfjs = await import('pdfjs-dist/legacy/build/pdf');
-          const arrayBuffer = await file.arrayBuffer();
-          const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
-          const doc = await loadingTask.promise;
-          let fullText = '';
-          for (let i = 1; i <= doc.numPages; i++) {
-            const page = await doc.getPage(i);
-            const content = await page.getTextContent();
-            const strings = content.items.map(it => it.str);
-            fullText += strings.join(' ') + '\n';
-          }
-          parseTextToPreview(fullText);
-        } catch (err) {
-          setImportErrors([`PDF parsing requires the package 'pdfjs-dist'. Run: npm install pdfjs-dist`]);
-        }
-      } else if (name.endsWith('.docx') || name.endsWith('.doc')) {
-        try {
-          const mammoth = await import('mammoth');
-          const arrayBuffer = await file.arrayBuffer();
-          const result = await mammoth.extractRawText({ arrayBuffer });
-          parseTextToPreview(result.value || '');
-        } catch (err) {
-          setImportErrors([`DOCX parsing requires the package 'mammoth'. Run: npm install mammoth`]);
-        }
-      } else {
-        // treat as text / csv
+      
+      // Only support CSV and TXT files to reduce bundle size
+      if (name.endsWith('.csv') || name.endsWith('.txt')) {
         const text = await file.text();
         parseTextToPreview(text);
+      } else {
+        setImportErrors([`Unsupported file format. Please use CSV or TXT files only.`]);
+        setImportStatus({ loading: false, message: '❌ Unsupported file format', type: 'error' });
       }
     } catch (err) {
       setImportErrors([String(err)]);
+      setImportStatus({ loading: false, message: '❌ Error processing file', type: 'error' });
     }
   };
 
@@ -1832,7 +1811,7 @@ function ProductsTab() {
       {importOpen && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h3 className="text-xl font-bold mb-4">Import Products From File</h3>
-          <p className="text-sm text-gray-600 mb-2">Supported: .csv, .txt, .pdf, .docx files containing product information.</p>
+          <p className="text-sm text-gray-600 mb-2">Supported: .csv, .txt files containing product information.</p>
           <div className="text-xs text-gray-500 mb-4 bg-blue-50 p-3 rounded-lg">
             <strong>What we look for:</strong>
             <ul className="mt-1 space-y-1">
@@ -1845,7 +1824,7 @@ function ProductsTab() {
             </ul>
             <p className="mt-2 text-blue-600"><strong>Tip:</strong> For best results, use structured formats like CSV with headers (Name, Price, Category, Code, Stock, Description)</p>
           </div>
-          <input type="file" accept=".csv,.txt,.pdf,.doc,.docx" onChange={handleFileInput} className="mb-4" />
+          <input type="file" accept=".csv,.txt" onChange={handleFileInput} className="mb-4" />
           
           {/* Import Status Display */}
           {importStatus.message && (

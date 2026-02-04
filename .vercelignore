@@ -1,0 +1,30 @@
+# Ignore files to reduce deployment size
+node_modules
+.git
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.log
+.DS_Store
+Thumbs.db
+
+# Ignore development files
+src/**/*.test.js
+src/**/*.spec.js
+__tests__
+coverage
+.nyc_output
+
+# Ignore documentation
+README.md
+docs/
+*.md
+
+# Ignore large files
+public/videos/
+public/large-images/
+
+# Ignore build artifacts
+.next/cache
+.next/static/chunks/webpack-*
